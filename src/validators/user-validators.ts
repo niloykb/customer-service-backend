@@ -3,7 +3,7 @@ import { body } from 'express-validator';
 
 export const registerValidationRules = [
     body('email')
-        .isEmail().withMessage('Enter a valid email address')
+        .isEmail().withMessage('Enter a valid email address ')
         .custom(async (value) => {
             const existingUser = await prisma.user.findUnique({
                 where: {
