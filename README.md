@@ -59,14 +59,6 @@ This is a backend API service named `customer-service-backend` built using TypeS
 - **PUT /customers/:id**: Update a customer by ID.
 - **DELETE /customers/:id**: Delete a customer by ID.
 
-### Orders
-
-- **GET /orders**: Retrieve a list of orders.
-- **GET /orders/:id**: Retrieve a specific order by ID.
-- **POST /orders**: Create a new order.
-- **PUT /orders/:id**: Update an order by ID.
-- **DELETE /orders/:id**: Delete an order by ID.
-
 ## Authentication
 
 This project uses JWT for authentication. To access protected routes, include the JWT token in the `Authorization` header as follows:
