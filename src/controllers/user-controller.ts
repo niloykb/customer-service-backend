@@ -23,10 +23,20 @@ export const login = async (req: Request, res: Response) => {
   }
   try {
     const { email, password } = req.body;
-    const token = await userService.loginUser(email, password);
-    handleResponse(res, 200, 'success', 'Login successful', { token });
+    const { token, user } = await userService.loginUser(email, password);
+    const { id, name, email: userEmail } = user;
+    handleResponse(res, 200, 'success', 'Login successful', { token, user: { id, name, email: userEmail } });
   } catch (error) {
     return handleResponse(res, 401, 'error', 'Invalid Credentials', null, error);
   }
 
+};
+
+export const listUsers = async (req: Request, res: Response) => {
+  try {
+    const users = await userService.getAllUsers();
+    handleResponse(res, 200, 'success', 'Users retrieved successfully', users);
+  } catch (error) {
+    handleResponse(res, 500, 'error', 'Unable to retrieve users', null, error);
+  }
 };

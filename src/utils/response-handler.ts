@@ -6,7 +6,7 @@ interface ResponseData {
   status: Status;
   message: string;
   data?: any;
-  error?: string;
+  error?: string | string[];
 }
 
 export const handleResponse = (
@@ -22,13 +22,19 @@ export const handleResponse = (
     message: message,
   };
 
-  if (data) {
+  if(data) {
     response.data = data;
   }
 
   if (error) {
-    response.error = error instanceof Error ? error.message : 'Unknown error';
+    if (Array.isArray(error)) {
+      response.error = error;
+    } else if (error instanceof Error) {
+      response.error = error.message;
+    } else {
+      response.error = 'Unknown error';
+    }
   }
-  
+
   res.status(statusCode).json(response);
 };
