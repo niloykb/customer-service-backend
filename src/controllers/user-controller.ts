@@ -25,7 +25,9 @@ export const login = async (req: Request, res: Response) => {
     const { email, password } = req.body;
     const { token, user } = await userService.loginUser(email, password);
     const { id, name, email: userEmail } = user;
-    handleResponse(res, 200, 'success', 'Login successful', { token, user: { id, name, email: userEmail } });
+
+    handleResponse(res, 200, 'success', 'Login successful', { id, name, email: userEmail }, null, token);
+
   } catch (error) {
     return handleResponse(res, 401, 'error', 'Invalid Credentials', null, error);
   }

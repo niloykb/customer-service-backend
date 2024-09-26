@@ -7,6 +7,7 @@ interface ResponseData {
   message: string;
   data?: any;
   error?: string | string[];
+  token?: string;
 }
 
 export const handleResponse = (
@@ -15,7 +16,8 @@ export const handleResponse = (
   status: Status,
   message: string,
   data: any = null,
-  error: any = null
+  error: any = null,
+  token?: string,
 ): void => {
   const response: ResponseData = {
     status: status,
@@ -24,6 +26,9 @@ export const handleResponse = (
 
   if(data) {
     response.data = data;
+  }
+  if(token) {
+    response.token = token;
   }
 
   if (error) {
