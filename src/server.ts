@@ -16,7 +16,7 @@ app.get("/", (req, res) => {
   res.json({ message: 'Welcome to the app!' });
 });
 
-app.use('/api', routes);
+app.use('/api/v1', routes);
 
 app.use(errorHandler);
 

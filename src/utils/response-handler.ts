@@ -6,7 +6,7 @@ interface ResponseData {
   status: Status;
   message: string;
   data?: any;
-  error?: string | string[];
+  errors?: string[];
   token?: string;
 }
 
@@ -15,17 +15,21 @@ export const handleResponse = (
   statusCode: number,
   status: Status,
   message: string,
-  data: any = null,
-  error: any = null,
-  token?: string,
+  data?: any,
+  errors?: any,
+  token?: string
 ): void => {
-  const response: ResponseData = {
+  const response: Partial<ResponseData> = {
     status,
     message,
     ...(data && { data }),
     ...(token && { token }),
-    ...(error && { error: Array.isArray(error) ? error : error instanceof Error ? error.message : 'Unknown error' }),
+    ...(errors && { errors }),
   };
 
   res.status(statusCode).json(response);
 };
+
+export const getErrorMessage = (error: unknown): string => {
+  return error instanceof Error ? error.message : 'Unknown error';
+}
