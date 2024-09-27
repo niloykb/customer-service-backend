@@ -1,3 +1,4 @@
+import prisma from '../config/db';
 import { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
 import * as userService from '../services/user-service';
@@ -5,6 +6,15 @@ import { handleResponse } from '../utils/response-handler';
 
 export const register = async (req: Request, res: Response) => {
   const errors = validationResult(req);
+
+  const existingUser = await prisma.user.findUnique({
+    where: {
+      email: req.body.email
+    }
+  });
+  if (existingUser) {
+    return handleResponse(res, 500, 'error', 'User already exists');
+  }
   if (!errors.isEmpty()) {
     return handleResponse(res, 400, 'error', 'Validation failed', null, errors.array());
   }

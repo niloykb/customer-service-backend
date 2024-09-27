@@ -12,7 +12,6 @@ export const createUser = async (userData: Omit<User, 'id'>): Promise<Omit<User,
     },
   });
 
-  // Omit the password from the returned user object
   const { password, ...userWithoutPassword } = user;
   return userWithoutPassword;
 };

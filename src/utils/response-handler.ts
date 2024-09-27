@@ -20,26 +20,12 @@ export const handleResponse = (
   token?: string,
 ): void => {
   const response: ResponseData = {
-    status: status,
-    message: message,
+    status,
+    message,
+    ...(data && { data }),
+    ...(token && { token }),
+    ...(error && { error: Array.isArray(error) ? error : error instanceof Error ? error.message : 'Unknown error' }),
   };
-
-  if(data) {
-    response.data = data;
-  }
-  if(token) {
-    response.token = token;
-  }
-
-  if (error) {
-    if (Array.isArray(error)) {
-      response.error = error;
-    } else if (error instanceof Error) {
-      response.error = error.message;
-    } else {
-      response.error = 'Unknown error';
-    }
-  }
 
   res.status(statusCode).json(response);
 };

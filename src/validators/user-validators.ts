@@ -1,19 +1,7 @@
-import prisma from '../config/db';
 import { body } from 'express-validator';
 
 export const registerValidationRules = [
-    body('email')
-        .isEmail().withMessage('Enter a valid email address ')
-        .custom(async (value) => {
-            const existingUser = await prisma.user.findUnique({
-                where: {
-                    email: value,
-                },
-            });
-            if (existingUser) {
-                throw new Error('E-mail already in use');
-            }
-        }),
+    body('email').isEmail().withMessage('Enter a valid email address '),
     body('password')
         .notEmpty().withMessage('Password is required')
         .isLength({ min: 8 })
@@ -26,7 +14,7 @@ export const registerValidationRules = [
         .withMessage('Password must contain a lowercase letter')
         .matches(/[!@#$%^&*(),.?":{}|<>]/)
         .withMessage('Password must contain a special character'),
-    body('name').notEmpty().withMessage('Name is required'),
+    body('name').notEmpty().withMessage('Name is required')
 ];
 
 export const loginValidationRules = [

@@ -12,9 +12,17 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
+app.get("/", (req, res) => {
+  res.json({ message: 'Welcome to the app!' });
+});
+
 app.use('/api', routes);
 
 app.use(errorHandler);
+
+app.use((req, res) => {
+  res.status(404).json({ message: 'Route not found' });
+});
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

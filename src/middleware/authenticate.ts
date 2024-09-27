@@ -1,27 +1,26 @@
+import { verify } from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
-import jwt, { verify } from 'jsonwebtoken';
-import { User } from '../models/user.model';
+import { handleResponse } from '../utils/response-handler';
+
+interface AuthenticatedRequest extends Request {
+  user?: string | object;
+}
 
 export const authenticateToken = (req: Request, res: Response, next: NextFunction) => {
-  const authHeader = req.header('Authorization');
-  const token = authHeader && authHeader.split(' ')[1];
+
+  const token = req.headers['authorization']?.split(' ')[1];
 
   if (!token) {
-    return res.status(401).json({ message: 'Authorization token is required' })
+    return handleResponse(res, 401, 'error', 'Authorization token is required');
   }
   try {
-    const parsedText = token.split(" ")[1];
-    const decoded = verify(parsedText, process.env.JWT_SECRET as string);
-    const request = req as AuthRequest;
-    request.userId = decoded.sub as string;
+    const decoded = verify(token, process.env.JWT_SECRET as string);
+    const request = req as AuthenticatedRequest;
+    request.user = decoded;
     next();
   } catch (error) {
-    return res.status(401).json({ message: 'Unauthorized' })
-
+    return handleResponse(res, 401, 'error', 'Unauthorized');
   }
-  // jwt.verify(token, process.env.JWT_SECRET as string, (err: any, user: any) => {
-  //   if (err) return res.sendStatus(403);
-  //   req.user = user as User;
-  //   next();
-  // });
+
 };
+

@@ -1,13 +1,13 @@
 import { Router } from 'express';
 import { authenticateToken } from '../middleware/authenticate';
-import * as userController from '../controllers/user-controller';
+import { listUsers, login, register } from '../controllers/user-controller';
 import { registerValidationRules, loginValidationRules } from '../validators/user-validators';
 
 const router = Router();
 
-router.post('/register', registerValidationRules, userController.register);
-router.post('/login', loginValidationRules, userController.login);
+router.post('/register', registerValidationRules, register);
+router.post('/login', loginValidationRules, login);
 
-router.get('/users', userController.listUsers);
+router.get('/', authenticateToken, listUsers);
 
 export default router;
