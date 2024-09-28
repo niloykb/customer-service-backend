@@ -1,10 +1,12 @@
-import { body } from 'express-validator';
+import prisma from '../config/db';
+import { body, param } from 'express-validator';
 
 const commonCustomerValidationRules = () => [
+
     body('name').notEmpty().withMessage('Name is required'),
     body('email')
         .notEmpty().withMessage('Email is required')
-        .isEmail().withMessage('Enter a valid email address'),
+        .isEmail().withMessage('Enter a valid email address '),
     body('type')
         .notEmpty().withMessage('Type is required')
         .isIn(['I', 'B', 'i', 'b']).withMessage('Invalid Business Type'),
@@ -14,10 +16,41 @@ const commonCustomerValidationRules = () => [
     body('postalCode').notEmpty().withMessage('Postal code is required'),
 ];
 
-export const storeCustomerValidationRules = commonCustomerValidationRules();
-export const updateCustomerValidationRules = commonCustomerValidationRules();
+const existenceValidationsRules = () => [
+    param('id').custom(async (id) => {
+        const customer = await prisma.customer.findUnique({
+            where: { id: Number(id) },
+        });
+        if (!customer) {
+            throw new Error('Customer not found');
+        }
+        return true;
+    }),
+];
+
+const updateValidationsRules = () => [
+    ...existenceValidationsRules(),
+    ...commonCustomerValidationRules()
+];
+
+const storeValidationsRules = () => [
+    ...commonCustomerValidationRules(),
+    body('email')
+        .custom(async (value) => {
+            const existingUser = await prisma.customer.findUnique({
+                where: { email: value },
+            });
+            if (existingUser) {
+                throw new Error('E-mail already in use');
+            }
+        }),
+];
+
+export const storeCustomerValidationRules = storeValidationsRules();
+export const updateCustomerValidationRules = updateValidationsRules();
 
 export const partialUpdateCustomerValidationRules = [
+    ...existenceValidationsRules(),
     body('name').optional().notEmpty().withMessage('Name cannot be empty if provided'),
     body('email')
         .optional()
